@@ -1,0 +1,357 @@
+/* 공통 */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #1e1e1e;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.main {
+  width: 800px;
+  padding: 20px;
+}
+
+/* 선택 화면 */
+.unitSelect {
+  display: none;
+  text-align: center;
+}
+.unitSelect.active {
+  display: block;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+/* 카드 컨테이너 */
+.unit {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+/* 카드 */
+.unitCard {
+  background: #333;
+  border: 2px solid #555;
+  border-radius: 12px;
+  width: 160px;
+  cursor: pointer;
+  padding: 10px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease,
+    border-color 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.unitCard:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.unitCard picture {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #666;
+}
+.unitCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 상태창 */
+.unitStatus {
+  background: #222;
+  padding: 8px 10px;
+  border-radius: 5px;
+  width: 100%;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.unitStatus .status {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.unitStatus .status span:first-child {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.unitStatus .status span:last-child {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 카드 호버 시 상태창 강조 */
+.unitCard:hover .unitStatus {
+  background: #333;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* 주요 수치 강조 */
+.status span:last-child.hp {
+  color: #f55;
+}
+.status span:last-child.atk {
+  color: #ffb74d;
+}
+.status span:last-child.def {
+  color: #4db6ac;
+}
+.status span:last-child.acc {
+  color: #ffeb3b;
+}
+.status span:last-child.eva {
+  color: #81c784;
+}
+
+/* 배틀 화면 */
+.battleScreen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+.battleScreen.active {
+  display: flex;
+}
+
+.battleField {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  height: 300px; /* 화면에서 차지할 높이 제한 */
+  margin-bottom: 15px;
+  position: relative;
+}
+
+/* 버튼 + 로그 영역 */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* 이전 15px → 10px */
+  width: 90%;
+  align-items: center;
+}
+
+.heroArea,
+.monsterArea {
+  background: #222;
+  padding: 10px;
+  border-radius: 12px;
+  width: 160px;
+  text-align: center;
+  position: relative;
+}
+
+.heroArea img,
+.monsterArea img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.hpBarContainer {
+  background: #555;
+  width: 100%;
+  height: 16px;
+  border-radius: 8px;
+  margin: 5px 0;
+  overflow: hidden;
+}
+
+.hpBar {
+  height: 100%;
+  width: 100%;
+  border-radius: 8px;
+  background: red;
+  transition: width 0.3s ease;
+}
+
+/* 가위바위보 버튼 영역 */
+.rpsButtons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* 버튼 */
+.rpsButtons button {
+  padding: 12px 24px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #3b82f6;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.rpsButtons button:hover {
+  background: #2563eb;
+}
+
+/* 로그 */
+.battleLog {
+  width: 90%;
+  max-height: 180px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 16px;
+  border-radius: 12px;
+  overflow-y: auto;
+  padding: 12px;
+  line-height: 1.4;
+}
+
+/* 로그 종류별 색상 */
+.battleLog .playerAttack {
+  color: #4db6ac;
+}
+
+.battleLog .monsterAttack {
+  color: #ff7043;
+}
+
+.battleLog .miss {
+  color: #ffeb3b;
+}
+
+.battleLog .critical {
+  color: #f44336;
+  font-weight: bold;
+}
+
+/* damageText */
+.damageText {
+  position: absolute;
+  color: red;
+  font-weight: bold;
+  font-size: 18px;
+  animation: floatUp 0.8s ease-out forwards;
+}
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+
+/* 공격/피격/회피 */
+.attackAni {
+  animation: shake 0.3s;
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+.hitAni {
+  animation: flash 0.2s;
+}
+@keyframes flash {
+  0% {
+    filter: brightness(2);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+
+.missAni {
+  transform: translateX(15px);
+  transition: transform 0.3s;
+}
+
+/* 게임 종료 시 */
+.endContainer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 25px;
+  background: #2a2a2a; /* 배경 어둡게 */
+  border: 2px solid #b8860b; /* 황금 테두리 */
+  border-radius: 16px;
+  box-shadow: 0 0 10px rgba(184, 134, 11, 0.4);
+}
+
+/* 결과 메시지 */
+.endMessage {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.endMessage.win {
+  color: #ffd700; /* 승리: 골드 */
+  text-shadow: 1px 1px 4px rgba(255, 215, 0, 0.6);
+}
+
+.endMessage.lose {
+  color: #ff4500; /* 패배: 오렌지레드 */
+  text-shadow: 1px 1px 4px rgba(255, 69, 0, 0.6);
+}
+
+/* 재시작 버튼 */
+.restart-btn {
+  background: linear-gradient(90deg, #daa520, #b8860b); /* 골드 그라데이션 */
+  border: none;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.restart-btn:hover {
+  background: linear-gradient(90deg, #b8860b, #daa520);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(218, 165, 32, 0.6);
+}
+@keyframes fadeInEnd {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RPS Battle Game</title>
+    <link rel="stylesheet" href="/css/reset.css" />
+    <link rel="stylesheet" href="/css/index.css" />
+    <script src="/js/index.js" type="module"></script>
+  </head>
+  <body>
+    <main class="main">
+      <!-- 1. 캐릭터 선택 화면 -->
+      <section id="characterSelect" class="unitSelect active">
+        <div class="title">캐릭터를 선택하세요.</div>
+        <div class="unit"></div>
+      </section>
+
+      <!-- 2. 몬스터 선택 화면 -->
+      <section id="monsterSelect" class="unitSelect">
+        <div class="title">몬스터를 선택하세요.</div>
+        <div class="unit"></div>
+      </section>
+
+      <!-- 3. 전투 화면 -->
+      <section id="battleScreen" class="battleScreen">
+        <div class="battleField">
+          <div class="heroArea"></div>
+          <div class="monsterArea"></div>
+        </div>
+
+        <div class="controls">
+          <!-- 가위바위보 버튼 -->
+          <div class="rpsButtons">
+            <button data-choice="scissors">가위</button>
+            <button data-choice="rock">바위</button>
+            <button data-choice="paper">보</button>
+          </div>
+
+          <!-- 전투 로그 -->
+          <div class="battleLog"></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
