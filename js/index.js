@@ -61,7 +61,7 @@ const renderUnits = (list, container, type) => {
   });
 };
 
-// 전투 화면 렌더링 (최초 한 번)
+// 전투 화면 렌더링
 const renderBattleField = () => {
   battleSection.classList.add("active");
 
@@ -100,27 +100,15 @@ const updateHP = () => {
   ).textContent = `HP: ${selectedMonster.hp}`;
 };
 
-// 로그 추가
-const addBattleLog = (text, type = "") => {
-  const div = document.createElement("div");
-  div.textContent = text;
-  if (type) div.classList.add(type);
-  battleLog.appendChild(div);
-  battleLog.scrollTop = battleLog.scrollHeight;
-};
-
 // 게임 종료
 const gameOverHandler = (winner, isHeroWinner) => {
-  // 버튼 비활성화
   rpsButtons.forEach((b) => (b.disabled = true));
 
-  // 이미 종료 메시지가 있으면 중복 생성 방지
   if (battleSection.querySelector(".endContainer")) return;
 
   const endContainer = document.createElement("div");
   endContainer.classList.add("endContainer");
 
-  // 승리/패배 색상
   const color = isHeroWinner ? "#4caf50" : "#f44336";
   endContainer.innerHTML = `
     <div class="endMessage" style="color:${color}; font-weight:bold; font-size:18px;">
@@ -130,9 +118,11 @@ const gameOverHandler = (winner, isHeroWinner) => {
   `;
   battleSection.appendChild(endContainer);
 
-  // 재시작 버튼 이벤트
   const restartBtn = endContainer.querySelector(".restart-btn");
   restartBtn.addEventListener("click", () => {
+    selectedHero?.resetHP();
+    selectedMonster?.resetHP();
+
     selectedHero = null;
     selectedMonster = null;
     battleLog.innerHTML = "";
@@ -167,31 +157,60 @@ rpsButtons.forEach((btn) => {
     const monsterChoice = choices[Math.floor(Math.random() * 3)];
     const result = judge(playerChoice, monsterChoice);
 
-    // 가위 바위 보 승패 로그 추가
-    addBattleLog(`${result}`);
+    const logBlock = document.createElement("div");
+    logBlock.classList.add("logBlock");
 
-    // 전투 내역 추가
-    let attackLogs = [];
-    if (result === "승리!")
-      attackLogs = selectedHero.attack(selectedMonster, ".heroArea");
-    else if (result === "패배!")
-      attackLogs = selectedMonster.attack(selectedHero, ".monsterArea");
-    else attackLogs = "무승부!";
+    if (result === "승리!") {
+      const attackLogs = selectedHero.attack(selectedMonster, ".heroArea");
 
-    attackLogs.forEach((l) => {
-      let type = "";
-      if (l.includes("회피")) type = "miss";
-      else if (l.includes("크리티컬") || l.includes("2배")) type = "critical";
-      else if (l.includes(selectedHero.name)) type = "playerAttack";
-      else type = "monsterAttack";
+      if (attackLogs.some((l) => l.includes("회피"))) {
+        logBlock.innerHTML = `
+          <strong class="result">승리!</strong>
+          <span class="miss">하지만 ${selectedMonster.name}이(가) 공격을 회피했다!</span>
+        `;
+      } else {
+        const isCritical = attackLogs.some((l) => l.includes("크리티컬"));
+        const damageLine = attackLogs.find((l) => l.includes("피해"));
+        const damage = damageLine ? damageLine.match(/\d+/)[0] : 0;
+        logBlock.innerHTML = `
+          <strong class="result">승리!</strong>
+          <span class="${isCritical ? "critical" : "playerAttack"}">
+            ${selectedHero.name}의 공격! ${
+          selectedMonster.name
+        }에게 ${damage}의 ${isCritical ? "강한 피해를" : "피해를"} 주었다.
+          </span>
+        `;
+      }
+    } else if (result === "패배!") {
+      const attackLogs = selectedMonster.attack(selectedHero, ".monsterArea");
 
-      addBattleLog(l, type);
-    });
+      if (attackLogs.some((l) => l.includes("회피"))) {
+        logBlock.innerHTML = `
+          <strong class="result">패배!</strong>
+          <span class="miss">${selectedHero.name}이(가) 공격을 회피했다!</span>
+        `;
+      } else {
+        const isCritical = attackLogs.some((l) => l.includes("크리티컬"));
+        const damageLine = attackLogs.find((l) => l.includes("피해"));
+        const damage = damageLine ? damageLine.match(/\d+/)[0] : 0;
+        logBlock.innerHTML = `
+          <strong class="result">패배!</strong>
+          <span class="${isCritical ? "critical" : "monsterAttack"}">
+            ${selectedMonster.name}의 공격! ${damage}의 ${
+          isCritical ? "강한 피해를" : "피해를"
+        } 받았다.
+          </span>
+        `;
+      }
+    } else {
+      logBlock.innerHTML = `<strong class="result">무승부!</strong>`;
+    }
 
-    // HP 갱신
+    battleLog.appendChild(logBlock);
+    battleLog.scrollTop = battleLog.scrollHeight;
+
     updateHP();
 
-    // 게임 승패 체크
     if (selectedHero.isDead()) gameOverHandler(selectedMonster.name, false);
     if (selectedMonster.isDead()) gameOverHandler(selectedHero.name, true);
   });

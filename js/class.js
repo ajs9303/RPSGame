@@ -57,6 +57,11 @@ export class Unit {
     return this.#hp <= 0;
   }
 
+  // HP 초기화
+  resetHP() {
+    this.#hp = this.#maxHp;
+  }
+
   // 공격
   attack(target, areaSelector) {
     const logs = [];
