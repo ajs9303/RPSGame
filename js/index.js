@@ -1,4 +1,4 @@
-import { Unit } from "/js/class.js";
+import { Unit } from "/RPSGAME/js/class.js";
 
 // ----------------------------
 // 캐릭터 & 몬스터 데이터
