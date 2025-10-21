@@ -4,9 +4,13 @@ export class BattleUI {
     this.heroArea = battleSection.querySelector(".heroArea");
     this.monsterArea = battleSection.querySelector(".monsterArea");
     this.battleLog = battleSection.querySelector(".battleLog");
+    this.hero = null;
+    this.monster = null;
   }
 
   renderBattleField(hero, monster) {
+    this.hero = hero;
+    this.monster = monster;
     this.heroArea.innerHTML = `
       <picture><img src='${hero.img}' /></picture>
       <div>${hero.name}</div>
@@ -66,13 +70,16 @@ export class BattleUI {
 
     // 로그 작성
     const textWinlose = winlose === "win" ? "이겼다!" : "졌다!";
+    const attackClass =
+      attacker === this.hero ? "playerAttack" : "monsterAttack";
+
     const logBlock = document.createElement("div");
     logBlock.className = "logBlock";
     logBlock.innerHTML = result.miss
       ? `<strong class="result">${textWinlose}</strong>
         <span class="miss">${target.name}이(가) 공격을 회피!</span>`
       : `<strong class="result">${textWinlose}</strong>
-        <span class="${result.critical ? "critical" : "playerAttack"}">
+        <span class="${result.critical ? "critical" : attackClass}">
         ${attacker.name}의 공격! ${target.name}에게 ${result.damage}의 ${
           result.critical ? "강한 피해" : "피해"
         }</span>`;

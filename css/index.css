@@ -13,6 +13,8 @@ body {
 .main {
   width: 800px;
   padding: 20px;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 /* 선택 화면 */
@@ -144,7 +146,8 @@ body {
   justify-content: space-around;
   align-items: center;
   width: 90%;
-  height: 300px; /* 화면에서 차지할 높이 제한 */
+  height: 40vh; /* 화면에서 차지할 높이 제한 */
+  max-height: 300px;
   margin-bottom: 15px;
   position: relative;
 }
