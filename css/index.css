@@ -253,7 +253,6 @@ body {
 .critical {
   color: #f44336;
   font-weight: bold;
-  text-shadow: 0 0 2px #fff;
 }
 
 .logBlock {
