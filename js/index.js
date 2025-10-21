@@ -72,31 +72,27 @@ const renderUnits = (list, container, type) => {
 const renderBattleField = () => {
   battleSection.classList.add("active");
 
-  if (!heroArea.querySelector(".heroBar")) {
-    heroArea.innerHTML = `
-      <picture><img src='${selectedHero.img}' /></picture>
-      <div>${selectedHero.name}</div>
-      <div class="hpBarContainer">
-        <div class="hpBar heroBar" style="width:${
-          (selectedHero.hp / selectedHero.maxHp) * 100
-        }%"></div>
-      </div>
-      <div class="hpText">HP: ${selectedHero.hp}</div>
-    `;
-  }
+  heroArea.innerHTML = `
+    <picture><img src='${selectedHero.img}' /></picture>
+    <div>${selectedHero.name}</div>
+    <div class="hpBarContainer">
+      <div class="hpBar heroBar" style="width:${
+        (selectedHero.hp / selectedHero.maxHp) * 100
+      }%"></div>
+    </div>
+    <div class="hpText">HP: ${selectedHero.hp}</div>
+  `;
 
-  if (!monsterArea.querySelector(".monsterBar")) {
-    monsterArea.innerHTML = `
-      <picture><img src='${selectedMonster.img}' /></picture>
-      <div>${selectedMonster.name}</div>
-      <div class="hpBarContainer">
-        <div class="hpBar monsterBar" style="width:${
-          (selectedMonster.hp / selectedMonster.maxHp) * 100
-        }%"></div>
-      </div>
-      <div class="hpText">HP: ${selectedMonster.hp}</div>
-    `;
-  }
+  monsterArea.innerHTML = `
+    <picture><img src='${selectedMonster.img}' /></picture>
+    <div>${selectedMonster.name}</div>
+    <div class="hpBarContainer">
+      <div class="hpBar monsterBar" style="width:${
+        (selectedMonster.hp / selectedMonster.maxHp) * 100
+      }%"></div>
+    </div>
+    <div class="hpText">HP: ${selectedMonster.hp}</div>
+  `;
 };
 
 // ----------------------------
@@ -106,7 +102,6 @@ const updateHP = () => {
     (selectedHero.hp / selectedHero.maxHp) * 100 + "%";
   monsterArea.querySelector(".monsterBar").style.width =
     (selectedMonster.hp / selectedMonster.maxHp) * 100 + "%";
-
   heroArea.querySelector(".hpText").textContent = `HP: ${selectedHero.hp}`;
   monsterArea.querySelector(
     ".hpText"
@@ -125,25 +120,29 @@ const gameOverHandler = (winner, isHeroWinner) => {
   const endContainer = document.createElement("div");
   endContainer.classList.add("endContainer");
 
-  const msgClass = isHeroWinner ? "win" : "lose";
+  // 승리/패배 색상
+  const color = isHeroWinner ? "#4caf50" : "#f44336";
+
   endContainer.innerHTML = `
-    <div class="endMessage ${msgClass}">🎉 ${winner} 승리! 전투 종료 🎉</div>
+    <div class="endMessage" style="color:${color}; font-weight:bold; font-size:18px;">
+      🎉 ${winner} 승리! 전투 종료 🎉
+    </div>
     <button class="restart-btn">다시 시작</button>
   `;
 
+  // battleSection에 로그 아래로 추가
   battleSection.appendChild(endContainer);
 
+  // 재시작 버튼 이벤트
   const restartBtn = endContainer.querySelector(".restart-btn");
   restartBtn.addEventListener("click", () => {
     selectedHero = null;
     selectedMonster = null;
     battleLog.innerHTML = "";
     rpsButtons.forEach((b) => (b.disabled = false));
-
     heroArea.innerHTML = "";
     monsterArea.innerHTML = "";
     endContainer.remove();
-
     battleSection.classList.remove("active");
     characterSection.classList.add("active");
   });
@@ -174,30 +173,37 @@ rpsButtons.forEach((btn) => {
     const monsterChoice = choices[Math.floor(Math.random() * 3)];
     const result = judge(playerChoice, monsterChoice);
 
-    let log = `플레이어: ${choiceText(playerChoice)} / 몬스터: ${choiceText(
-      monsterChoice
-    )} → ${result}<br>`;
+    // 1. 선택 로그
+    battleLog.innerHTML += `플레이어: ${choiceText(
+      playerChoice
+    )}, 몬스터: ${choiceText(monsterChoice)} → ${result}<br>`;
 
-    if (result === "승리") {
-      const attackLogs = selectedHero.attack(selectedMonster, ".heroArea");
-      attackLogs.forEach((l) => (log += `<div>${l}</div>`));
-    } else if (result === "패배") {
-      const attackLogs = selectedMonster.attack(selectedHero, ".monsterArea");
-      attackLogs.forEach((l) => (log += `<div>${l}</div>`));
-    } else {
-      log += `<div>무승부! 피해 없음.</div>`;
-    }
+    // 2. 전투
+    let attackLogs = [];
+    if (result === "승리")
+      attackLogs = selectedHero.attack(selectedMonster, ".heroArea");
+    else if (result === "패배")
+      attackLogs = selectedMonster.attack(selectedHero, ".monsterArea");
+    else attackLogs = ["무승부! 피해 없음."];
 
+    attackLogs.forEach((l) => {
+      const div = document.createElement("div");
+      if (l.includes("회피")) div.classList.add("miss");
+      else if (l.includes("크리티컬") || l.includes("2배"))
+        div.classList.add("critical");
+      else if (l.includes(selectedHero.name)) div.classList.add("playerAttack");
+      else div.classList.add("monsterAttack");
+      div.innerHTML = l;
+      battleLog.appendChild(div);
+    });
+
+    // 3 HP 갱신
     updateHP();
-    battleLog.innerHTML += log;
     battleLog.scrollTop = battleLog.scrollHeight;
 
-    // 승패 체크
-    if (selectedHero.isDead()) {
-      gameOverHandler(selectedMonster.name, false);
-    } else if (selectedMonster.isDead()) {
-      gameOverHandler(selectedHero.name, true);
-    }
+    // 4. 승패 체크
+    if (selectedHero.isDead()) gameOverHandler(selectedMonster.name, false);
+    if (selectedMonster.isDead()) gameOverHandler(selectedHero.name, true);
   });
 });
 

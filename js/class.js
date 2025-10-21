@@ -49,13 +49,6 @@ export class Unit {
     return this.#img;
   }
 
-  // 공격 확률 계산
-  calculateHit(target) {
-    let chance = 80 + this.#acc - target.eva;
-    chance = Math.min(85, Math.max(15, chance)); // 15 ~ 85% 제한
-    return Math.random() * 100 < chance;
-  }
-
   // 피해 받음
   getDamage(damage) {
     this.#hp = Math.max(0, this.#hp - damage);
@@ -63,41 +56,55 @@ export class Unit {
 
   // 공격
   attack(target, areaSelector) {
-    const isHit = this.calculateHit(target);
     const logs = [];
     const logArea = document.querySelector(".battleLog");
 
     // 타격 효과
     const attackerEl = document.querySelector(areaSelector);
-    attackerEl.classList.add("attackAni");
-    setTimeout(() => attackerEl.classList.remove("attackAni"), 400);
 
     // 피격 효과
     const targetEl = document.querySelector(
       areaSelector.includes("hero") ? ".monsterArea" : ".heroArea"
     );
 
-    if (isHit) {
-      const damage = Math.floor(this.#atk * (100 / (100 + target.def)));
-      target.getDamage(damage);
-
-      targetEl.classList.add("hitAni");
-      setTimeout(() => targetEl.classList.remove("hitAni"), 300);
-
-      // 대미지 숫자 표시
-      const dmgText = document.createElement("span");
-      dmgText.classList.add("damageText");
-      dmgText.textContent = `-${damage}`;
-      targetEl.appendChild(dmgText);
-      setTimeout(() => dmgText.remove(), 800);
-
-      logs.push(`${this.#name}의 공격! ${target.name}에게 ${damage} 피해!`);
-    } else {
-      // 회피 효과
+    // 1. 회피 체크
+    if (Math.random() * 100 < target.eva) {
       targetEl.classList.add("missAni");
       setTimeout(() => targetEl.classList.remove("missAni"), 300);
-      logs.push(`${this.#name}의 공격! ${target.name}이(가) 회피!`);
+      logs.push(`${target.name}이(가) 공격을 회피!`);
+      return logs;
     }
+
+    // 2. 피해 계산(방어력 적용)
+    let damage = Math.floor(this.#atk * (100 / (100 + target.def)));
+
+    // 3. 크리 계산(명중률)
+    let isCritical = Math.random() * 100 < this.#acc;
+    if (isCritical) {
+      damage *= 2;
+      logs.push("크리티컬 !!");
+    }
+
+    // HP 차감
+    target.getDamage(damage);
+
+    // 공격 애니메이션
+    attackerEl.classList.add("attackAni");
+    setTimeout(() => attackerEl.classList.remove("attackAni"), 400);
+
+    // 피격 애니메이션
+    targetEl.classList.add("hitAni");
+    setTimeout(() => targetEl.classList.remove("hitAni"), 300);
+
+    // 데미지 표시
+    const dmgText = document.createElement("span");
+    dmgText.classList.add("damageText");
+    dmgText.textContent = `-${damage}`;
+    targetEl.appendChild(dmgText);
+    setTimeout(() => dmgText.remove(), 800);
+
+    // 로그 작성
+    logs.push(`${this.#name}의 공격! ${target.name}에게 ${damage} 피해!`);
 
     return logs;
   }
