@@ -4,15 +4,15 @@ import { Unit } from "/js/class.js";
 // 캐릭터 & 몬스터 데이터
 // ----------------------------
 const characters = [
-  new Unit("전사", 500, 50, 30, 20, 10, "/img/hero.png"),
-  new Unit("궁수", 400, 60, 25, 15, 15, "/img/archer.png"),
-  new Unit("도적", 350, 70, 20, 10, 20, "/img/thief.png"),
+  new Unit("전사", 500, 50, 30, 20, 10, "/RPSGAME/img/hero.png"),
+  new Unit("궁수", 400, 60, 25, 15, 15, "/RPSGAME/img/archer.png"),
+  new Unit("도적", 350, 70, 20, 10, 20, "/RPSGAME/img/thief.png"),
 ];
 
 const monsters = [
-  new Unit("슬라임", 200, 30, 20, 5, 5, "/img/slime.png"),
-  new Unit("오크", 450, 40, 25, 20, 10, "/img/orc.png"),
-  new Unit("드래곤", 700, 55, 35, 30, 15, "/img/dragon.png"),
+  new Unit("슬라임", 200, 30, 20, 5, 5, "/RPSGAME/img/slime.png"),
+  new Unit("오크", 450, 40, 25, 20, 10, "/RPSGAME/img/orc.png"),
+  new Unit("드래곤", 700, 55, 35, 30, 15, "/RPSGAME/img/dragon.png"),
 ];
 
 // ----------------------------
