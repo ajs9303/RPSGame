@@ -2,12 +2,16 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #1e1e1e;
+  /* background-color: #1e1e1e; */
+
   color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+
+  background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+  overflow: hidden;
 }
 
 .main {
@@ -159,6 +163,11 @@ body {
   max-height: 300px;
   margin-bottom: 15px;
   position: relative;
+
+  background: rgba(30, 30, 03, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  padding: 20px;
 }
 
 /* 버튼 + 로그 영역 */
@@ -178,6 +187,14 @@ body {
   width: 160px;
   text-align: center;
   position: relative;
+
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+  transition: box-shadow 0.3s;
+}
+
+.heroArea:hover,
+.monsterArea:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
 }
 
 .heroArea img,
@@ -233,7 +250,7 @@ body {
 .battleLog {
   width: 90%;
   max-height: 200px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-size: 16px;
   border-radius: 12px;
@@ -242,6 +259,8 @@ body {
   line-height: 1.6;
   font-family: "Courier New", monospace;
   word-break: break-word;
+
+  box-shadow: 0 0 10px rgba(0, 0, 255, 0.3);
 }
 
 /* 로그 종류별 색상 */
@@ -309,10 +328,12 @@ body {
 /* damageText */
 .damageText {
   position: absolute;
-  color: red;
+  color: #ff4d4d;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
   animation: floatUp 0.8s ease-out forwards;
+
+  text-shadow: 1px 1px 4px black;
 }
 @keyframes floatUp {
   0% {
@@ -396,9 +417,13 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: 0.2s;
+
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
 }
 .restart-btn:hover {
   background-color: #1565c0;
+
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
 }
 
 @keyframes fadeInEnd {
