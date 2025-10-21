@@ -165,7 +165,7 @@ rpsButtons.forEach((btn) => {
 
       if (attackLogs.some((l) => l.includes("회피"))) {
         logBlock.innerHTML = `
-          <strong class="result">승리!</strong>
+          <strong class="result">이겼다!</strong>
           <span class="miss">하지만 ${selectedMonster.name}이(가) 공격을 회피했다!</span>
         `;
       } else {
@@ -194,7 +194,7 @@ rpsButtons.forEach((btn) => {
         const damageLine = attackLogs.find((l) => l.includes("피해"));
         const damage = damageLine ? damageLine.match(/\d+/)[0] : 0;
         logBlock.innerHTML = `
-          <strong class="result">패배!</strong>
+          <strong class="result">졌다!</strong>
           <span class="${isCritical ? "critical" : "monsterAttack"}">
             ${selectedMonster.name}의 공격! ${damage}의 ${
           isCritical ? "강한 피해를" : "피해를"
