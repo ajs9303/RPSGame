@@ -20,9 +20,7 @@ export class Unit {
     this.#img = img;
   }
 
-  // -------------------------------
-  // 🧭 getter
-  // -------------------------------
+  // getter
   get name() {
     return this.#name;
   }
@@ -54,6 +52,11 @@ export class Unit {
     this.#hp = Math.max(0, this.#hp - damage);
   }
 
+  // 죽었는지 여부
+  isDead() {
+    return this.#hp <= 0;
+  }
+
   // 공격
   attack(target, areaSelector) {
     const logs = [];
@@ -67,7 +70,7 @@ export class Unit {
       areaSelector.includes("hero") ? ".monsterArea" : ".heroArea"
     );
 
-    // 1. 회피 체크
+    // 회피 체크
     if (Math.random() * 100 < target.eva) {
       targetEl.classList.add("missAni");
       setTimeout(() => targetEl.classList.remove("missAni"), 300);
@@ -75,14 +78,16 @@ export class Unit {
       return logs;
     }
 
-    // 2. 피해 계산(방어력 적용)
+    // 피해 계산(방어력 적용)
     let damage = Math.floor(this.#atk * (100 / (100 + target.def)));
 
-    // 3. 크리 계산(명중률)
+    // 크리티컬 계산(명중률)
     let isCritical = Math.random() * 100 < this.#acc;
     if (isCritical) {
       damage *= 2;
-      logs.push("크리티컬 !!");
+      logs.push(`${this.name}의 크리티컬!`);
+    } else {
+      logs.push(`${this.name}의 공격!`);
     }
 
     // HP 차감
@@ -104,13 +109,8 @@ export class Unit {
     setTimeout(() => dmgText.remove(), 800);
 
     // 로그 작성
-    logs.push(`${this.#name}의 공격! ${target.name}에게 ${damage} 피해!`);
+    logs.push(`${target.name}에게 ${damage} 피해!`);
 
     return logs;
-  }
-
-  // 죽었는지 여부
-  isDead() {
-    return this.#hp <= 0;
   }
 }

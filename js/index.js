@@ -1,8 +1,6 @@
 import { Unit } from "./class.js";
 
-// ----------------------------
 // 캐릭터 & 몬스터 데이터
-// ----------------------------
 const characters = [
   new Unit("전사", 500, 50, 30, 20, 10, "img/hero.png"),
   new Unit("궁수", 400, 60, 25, 15, 15, "img/archer.png"),
@@ -15,9 +13,7 @@ const monsters = [
   new Unit("드래곤", 700, 55, 35, 30, 15, "img/dragon.png"),
 ];
 
-// ----------------------------
-// DOM 선택
-// ----------------------------
+// DOM
 const characterSection = document.querySelector("#characterSelect");
 const monsterSection = document.querySelector("#monsterSelect");
 const battleSection = document.querySelector("#battleScreen");
@@ -33,9 +29,7 @@ const rpsButtons = battleSection.querySelectorAll(".rpsButtons button");
 let selectedHero = null;
 let selectedMonster = null;
 
-// ----------------------------
 // 유닛 렌더링
-// ----------------------------
 const renderUnits = (list, container, type) => {
   container.innerHTML = "";
   list.forEach((unit) => {
@@ -67,7 +61,6 @@ const renderUnits = (list, container, type) => {
   });
 };
 
-// ----------------------------
 // 전투 화면 렌더링 (최초 한 번)
 const renderBattleField = () => {
   battleSection.classList.add("active");
@@ -95,7 +88,6 @@ const renderBattleField = () => {
   `;
 };
 
-// ----------------------------
 // HP 업데이트
 const updateHP = () => {
   heroArea.querySelector(".heroBar").style.width =
@@ -108,7 +100,15 @@ const updateHP = () => {
   ).textContent = `HP: ${selectedMonster.hp}`;
 };
 
-// ----------------------------
+// 로그 추가
+const addBattleLog = (text, type = "") => {
+  const div = document.createElement("div");
+  div.textContent = text;
+  if (type) div.classList.add(type);
+  battleLog.appendChild(div);
+  battleLog.scrollTop = battleLog.scrollHeight;
+};
+
 // 게임 종료
 const gameOverHandler = (winner, isHeroWinner) => {
   // 버튼 비활성화
@@ -122,15 +122,12 @@ const gameOverHandler = (winner, isHeroWinner) => {
 
   // 승리/패배 색상
   const color = isHeroWinner ? "#4caf50" : "#f44336";
-
   endContainer.innerHTML = `
     <div class="endMessage" style="color:${color}; font-weight:bold; font-size:18px;">
       🎉 ${winner} 승리! 전투 종료 🎉
     </div>
     <button class="restart-btn">다시 시작</button>
   `;
-
-  // battleSection에 로그 아래로 추가
   battleSection.appendChild(endContainer);
 
   // 재시작 버튼 이벤트
@@ -148,12 +145,8 @@ const gameOverHandler = (winner, isHeroWinner) => {
   });
 };
 
-// ----------------------------
-// 가위바위보 & 전투
+// 가위바위보
 const choices = ["rock", "paper", "scissors"];
-const choiceText = (choice) =>
-  choice === "rock" ? "바위" : choice === "paper" ? "보" : "가위";
-
 const judge = (player, monster) => {
   if (player === monster) return "무승부";
   if (
@@ -161,10 +154,11 @@ const judge = (player, monster) => {
     (player === "scissors" && monster === "paper") ||
     (player === "paper" && monster === "rock")
   )
-    return "승리";
-  return "패배";
+    return "승리!";
+  return "패배!";
 };
 
+// 전투
 rpsButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     if (!selectedHero || !selectedMonster) return;
@@ -173,41 +167,36 @@ rpsButtons.forEach((btn) => {
     const monsterChoice = choices[Math.floor(Math.random() * 3)];
     const result = judge(playerChoice, monsterChoice);
 
-    // 1. 선택 로그
-    battleLog.innerHTML += `플레이어: ${choiceText(
-      playerChoice
-    )}, 몬스터: ${choiceText(monsterChoice)} → ${result}<br>`;
+    // 가위 바위 보 승패 로그 추가
+    addBattleLog(`${result}`);
 
-    // 2. 전투
+    // 전투 내역 추가
     let attackLogs = [];
-    if (result === "승리")
+    if (result === "승리!")
       attackLogs = selectedHero.attack(selectedMonster, ".heroArea");
-    else if (result === "패배")
+    else if (result === "패배!")
       attackLogs = selectedMonster.attack(selectedHero, ".monsterArea");
-    else attackLogs = ["무승부! 피해 없음."];
+    else attackLogs = "무승부!";
 
     attackLogs.forEach((l) => {
-      const div = document.createElement("div");
-      if (l.includes("회피")) div.classList.add("miss");
-      else if (l.includes("크리티컬") || l.includes("2배"))
-        div.classList.add("critical");
-      else if (l.includes(selectedHero.name)) div.classList.add("playerAttack");
-      else div.classList.add("monsterAttack");
-      div.innerHTML = l;
-      battleLog.appendChild(div);
+      let type = "";
+      if (l.includes("회피")) type = "miss";
+      else if (l.includes("크리티컬") || l.includes("2배")) type = "critical";
+      else if (l.includes(selectedHero.name)) type = "playerAttack";
+      else type = "monsterAttack";
+
+      addBattleLog(l, type);
     });
 
-    // 3 HP 갱신
+    // HP 갱신
     updateHP();
-    battleLog.scrollTop = battleLog.scrollHeight;
 
-    // 4. 승패 체크
+    // 게임 승패 체크
     if (selectedHero.isDead()) gameOverHandler(selectedMonster.name, false);
     if (selectedMonster.isDead()) gameOverHandler(selectedHero.name, true);
   });
 });
 
-// ----------------------------
 // 초기 렌더링
 renderUnits(characters, characterContainer, "hero");
 renderUnits(monsters, monsterContainer, "monster");
